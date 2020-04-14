@@ -11,4 +11,29 @@ router.get('/', (req, res) => {
     .catch(error => res.status(500).json({ error: error.message }));
 })
 
+router.get('/:id', validateCarId, (req, res) => {
+    db('cars').where("id", req.params.id).then(cars => res.status(200).json(cars[0]))
+    .catch(error => res.status(500).json({ error: error.message }));
+})
+
+router.post('/', (req, res) => {
+    db('cars').insert(req.body).then(cars => {
+        db('cars').where("id", cars[0]).then(cars => res.status(200).json(cars[0]))
+        .catch(error => res.status(500).json({ error: error.message }));
+    })
+    .catch(error => res.status(500).json({ error: error.message }));
+})
+
+router.delete('/:id', validateCarId, (req, res) => {
+    db('cars').del().where("id", req.params.id).then(cars => res.status(204).json(cars))
+    .catch(error => res.status(500).json({ error: error.message }));
+})
+
+function validateCarId(req, res, next) {
+    db('cars').where("id", req.params.id).then(car => {
+        if (car.length > 0) next();
+        else res.status(404).json({ error: `could not find car with id ${req.params.id}`})
+    })
+}
+
 module.exports = router;
