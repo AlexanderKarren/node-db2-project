@@ -16,6 +16,11 @@ router.get('/:id', validateCarId, (req, res) => {
     .catch(error => res.status(500).json({ error: error.message }));
 })
 
+router.get('/:id/sales', (req, res) => {
+    db('sales').where("car_id", req.params.id).then(sales => res.status(200).json(sales))
+    .catch(error => res.status(500).json({ error: error.message }));
+})
+
 router.post('/', (req, res) => {
     db('cars').insert(req.body).then(cars => {
         db('cars').where("id", cars[0]).then(cars => res.status(200).json(cars[0]))
