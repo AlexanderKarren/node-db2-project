@@ -24,6 +24,14 @@ router.post('/', (req, res) => {
     .catch(error => res.status(500).json({ error: error.message }));
 })
 
+router.put('/:i', validateCarId, (req, res) => {
+    db('cars').update(req.body).where('id', req.params.id).then(cars => {
+        db('cars').where("id", req.params.id).then(cars => res.status(200).json(cars[0]))
+        .catch(error => res.status(500).json({ error: error.message }));
+    })
+    .catch(error => res.status(500).json({ error: error.message }));
+})
+
 router.delete('/:id', validateCarId, (req, res) => {
     db('cars').del().where("id", req.params.id).then(cars => res.status(204).json(cars))
     .catch(error => res.status(500).json({ error: error.message }));
